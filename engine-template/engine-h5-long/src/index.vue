@@ -36,11 +36,11 @@ export default {
   created() {
     // this.pageData = window._pageData;
     // this.scalingRatio = document.body.clientWidth / $config.canvasH5Width
-    this.pageTop =
-      (document.documentElement.clientHeight -
-        this.pageData.height * this.scalingRatio) /
-      2
-    this.pageTop = Math.max(this.pageTop, 0)
+    // this.pageTop =
+    //   (document.documentElement.clientHeight -
+    //     this.pageData.height * this.scalingRatio) /
+    //   2
+    // this.pageTop = Math.max(this.pageTop, 0)
   },
   methods: {
     /**
