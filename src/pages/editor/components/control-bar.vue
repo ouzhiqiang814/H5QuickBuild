@@ -47,10 +47,10 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import UploadPsd from '@src/components/upload-psd'
+// import UploadPsd from '@src/components/upload-psd'
 export default {
   components: {
-    UploadPsd,
+    // UploadPsd,
   },
   props: {
     // 是否loading
@@ -180,6 +180,7 @@ export default {
     }
     & > p {
       font-size: 14px;
+      margin-bottom: 0px;
     }
   }
 }

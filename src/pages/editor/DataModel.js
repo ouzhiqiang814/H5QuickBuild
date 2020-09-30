@@ -55,7 +55,8 @@ let pageConfig = {
 	commonStyle: {
 		backgroundColor: '',
 		backgroundImage: '',
-		backgroundSize: 'cover'
+		backgroundSize: 'cover',
+		animations: []
 	},
 	config: {}
 }

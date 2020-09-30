@@ -20,7 +20,7 @@
       <notFundData v-else />
     </div>
     <div class="audio-add">
-      <el-upload action="https://jsonplaceholder.typicode.com/posts/" :before-upload="beforeUploadMusic" accept="jpg,png,gif" :show-file-list="false">
+      <el-upload class="audio-add-ipt" action="https://jsonplaceholder.typicode.com/posts/" :before-upload="beforeUploadMusic" accept="jpg,png,gif" :show-file-list="false">
         <el-button size="small" type="primary">上传音乐</el-button>
         <span slot="tip" class="el-upload__tip marginL20">只能上传mp3/wav/ogg文件</span>
       </el-upload>
@@ -165,6 +165,23 @@ export default {
   &:hover {
     color: white;
     background: $primary;
+  }
+}
+.audio-add {
+  padding: 10px;
+  margin: 10px auto;
+  .audio-add-ipt {
+    display: flex;
+    align-items: center;
+  }
+  .audio-add-text {
+    margin-top: 20px;
+    display: inline-block;
+    font-size: 13px;
+    color: #8f8f8f;
+    &:hover {
+      color: $primary;
+    }
   }
 }
 </style>

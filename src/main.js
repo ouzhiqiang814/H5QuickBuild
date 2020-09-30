@@ -24,6 +24,9 @@ import engineH5Long from '../engine-template/engine-h5-long'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.css'
 
+import {
+	interParams
+} from '../src/service/interParams'
 
 Vue.use(Element);
 Vue.use(Tabs);
@@ -38,6 +41,7 @@ Vue.use(engineH5Long)
 Vue.prototype.$mUtils = mUtils;
 Vue.prototype.AES = AES
 Vue.prototype.$axios = httpServer;
+Vue.prototype.$interParams = interParams;
 
 /**
  * 公共配置信息

@@ -5,16 +5,16 @@
  * @param isDebugger 动画列表
  * @returns {Promise<void>}
  */
-export default async function runAnimation($el, animationList = [], isDebug , callback){
+export default async function runAnimation($el, animationList = [], isDebug, callback) {
 	let playFn = function (animation) {
 		return new Promise(resolve => {
-			$el.style.animationName =  animation.type
-			$el.style.animationDuration =  `${animation.duration}s`
+			$el.style.animationName = animation.type
+			$el.style.animationDuration = `${animation.duration}s`
 			// 如果是循环播放就将循环次数置为1，这样有效避免编辑时因为预览循环播放组件播放动画无法触发animationend来暂停组件动画
-			$el.style.animationIterationCount =  animation.infinite ? (isDebug ? 1 : 'infinite') : animation.interationCount
-			$el.style.animationDelay =  `${animation.delay}s`
-			$el.style.animationFillMode =  'both'
-			let resolveFn = function(){
+			$el.style.animationIterationCount = animation.infinite ? (isDebug ? 1 : 'infinite') : animation.interationCount
+			$el.style.animationDelay = `${animation.delay}s`
+			$el.style.animationFillMode = 'both'
+			let resolveFn = function () {
 				$el.removeEventListener('animationend', resolveFn, false);
 				$el.addEventListener('animationcancel', resolveFn, false);
 				resolve()
@@ -23,10 +23,10 @@ export default async function runAnimation($el, animationList = [], isDebug , ca
 			$el.addEventListener('animationcancel', resolveFn, false);
 		})
 	}
-	for(let i = 0, len = animationList.length; i < len; i++){
+	for (let i = 0, len = animationList.length; i < len; i++) {
 		await playFn(animationList[i])
 	}
-	if(callback){
+	if (callback) {
 		callback()
 	}
 }

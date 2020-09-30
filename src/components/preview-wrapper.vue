@@ -101,7 +101,7 @@ export default {
   }
 }
 </style>
-<style>
+<style lang="scss">
 .iframe-wrapper .el-scrollbar__wrap {
   overflow-x: hidden;
 }

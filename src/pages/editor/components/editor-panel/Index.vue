@@ -1,8 +1,9 @@
 <template>
   <div class="editor-pane" @click="handleClickCanvas" @keyup.esc="handleKeyup">
-    <div class="editor-pane-inner">
-      <div class="editor-main" :style="{transform: 'scale('+scale+')', width: projectData.width + 'px', height: projectData.height + 'px'}">
-        <div class="page-preview-wrapper" ref="canvas-panel" id="canvas-panel" :style="getCommonStyle(activePage.commonStyle)">
+    <el-scrollbar class="editor-pane-inner">
+      <div class="page-wrapper-mask"></div>
+      <el-scrollbar class="editor-main" :style="{transform: 'scale('+scale+')', width: projectData.width + 'px', height: projectData.height + 'px'}">
+        <div class="page-preview-wrapper" ref="canvas-panel" id="canvas-panel" :style="{...getCommonStyle(activePage.commonStyle), height: projectData.height + 'px'}">
           <!--页面组件列表展示-->
           <edit-shape v-for="item in activePage.elements" :key="item.uuid" :uuid="item.uuid" :defaultStyle="item.commonStyle" :style="getCommonStyle(item.commonStyle)"
             @handleElementClick="handleElementClick(item.uuid)" @resize="handleElementResize" :active="item.uuid === activeElementUUID">
@@ -10,25 +11,26 @@
           </edit-shape>
         </div>
 
-        <div class="page-wrapper-menu-operation menu-item-on-edit-panel" :style="{transform: 'scale('+(1/scale)+')'}" :class="{active: activeElementUUID}">
-          <el-tooltip v-for="(item, index) in menuOptions" :key="index" effect="dark" :content="item.title" placement="right">
-            <div class="menu-item menu-item-on-edit-panel" @click="handleElementCommand(item.value)">
-              <i class="menu-item-on-edit-panel" :class="[item.icon]"></i>
-            </div>
-          </el-tooltip>
-        </div>
-        <div class="page-wrapper-tabs">
-          <a-tabs :active-key="activeElementUUID" tab-position="right" style="height:644px;" @tabClick="fnHandelElementAct">
-            <a-tab-pane v-for="(item, i) in activePage.elements" :key="item.uuid" :uuid="item.uuid" :tab="fnTrans(item, i)"></a-tab-pane>
-          </a-tabs>
-        </div>
-        <div class="page-wrapper-mask"></div>
+      </el-scrollbar>
+      <div class="page-wrapper-menu-operation menu-item-on-edit-panel" :style="{transform: 'scale('+(1/scale)+')'}" :class="{active: activeElementUUID}">
+        <el-tooltip v-for="(item, index) in menuOptions" :key="index" effect="dark" :content="item.title" placement="right">
+          <div class="menu-item menu-item-on-edit-panel" @click="handleElementCommand(item.value)">
+            <i class="menu-item-on-edit-panel" :class="[item.icon]"></i>
+          </div>
+        </el-tooltip>
       </div>
-    </div>
+      <div class="page-wrapper-tabs">
+        <a-tabs :active-key="activeElementUUID" tab-position="right" style="min-height:100%;" @tabClick="fnHandelElementAct">
+          <a-tab-pane v-for="(item, i) in activePage.elements" :key="item.uuid" :uuid="item.uuid" :tab="fnTrans(item, i)"></a-tab-pane>
+        </a-tabs>
+      </div>
+    </el-scrollbar>
   </div>
 </template>
 
 <script>
+import runAnimations from '@src/common/js/runAnimations'
+import Bus from '@src/eventBus'
 import { _qk_register_components_object } from '@src/plugins/index'
 import editShape from '@/components/edit-shape'
 import editorProjectConfig from '@src/pages/editor/DataModel'
@@ -116,7 +118,21 @@ export default {
       'activePage',
     ]),
   },
-  mounted() {},
+  mounted() {
+    // 组件动画播放
+    this.pageAnimatePlaying = false
+    Bus.$on('RUN_PAGE_ANIMATIONS', (animations) => {
+      // 正在执行的动画不允许插入新动画
+      if (this.pageAnimatePlaying) return
+      const el = document.querySelector('#canvas-panel')
+      let cssText = el.style.cssText
+      this.pageAnimatePlaying = true
+      runAnimations(el, animations, true, () => {
+        el.style.cssText = cssText
+        this.pageAnimatePlaying = false
+      })
+    })
+  },
   methods: {
     /**
      * 元素被点击
@@ -266,10 +282,14 @@ export default {
 }
 
 .editor-pane-inner {
+  position: relative;
   height: 100%;
   width: 100%;
-  overflow: auto;
-  padding: 20px;
+  // padding: 20px;
+  /deep/.el-scrollbar__wrap {
+    width: calc(100% + 17px);
+    height: calc(100% + 17px);
+  }
 }
 
 .editor-main {
@@ -280,6 +300,7 @@ export default {
   background: white;
   transform-origin: center top;
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZAgMAAAC5h23wAAAAAXNSR0IB2cksfwAAAAlQTFRF9fX18PDwAAAABQ8/pgAAAAN0Uk5T/yIA41y2EwAAABhJREFUeJxjYIAC0VAQcGCQWgUCDUONBgDH8Fwzu33LswAAAABJRU5ErkJggg==');
+  // max-height: 644px;
 }
 
 .page-preview-wrapper {
@@ -288,9 +309,7 @@ export default {
 }
 
 .page-wrapper-mask {
-  height: 100%;
-  width: 100%;
-  z-index: 1000;
+  @extend .editor-main;
   position: absolute;
   left: 0;
   top: 0;
@@ -339,15 +358,16 @@ export default {
     width: 60px;
     opacity: 1;
     position: absolute;
-    left: -100px;
+    left: 10px;
   }
 }
 .page-wrapper-tabs {
   position: absolute;
-  right: -100px;
+  right: 10px;
   top: 0;
-  height: 644px;
+  height: 100%;
   z-index: 1002;
+  overflow: hidden;
 }
 </style>
 <style >

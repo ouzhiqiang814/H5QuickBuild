@@ -292,6 +292,52 @@ const actions = {
 		commit('addHistoryCache')
 	},
 	/**
+	 * 添加过场动画到页面上
+	 * @param {*} animationName 
+	 * @param {*} pageUUID 
+	 */
+	addPageAnimate({
+		commit
+	}, obj) {
+		// 初始化数据
+		let animateDefaultData = {
+			type: obj.animationName,
+			duration: 1,
+			infinite: '',
+			interationCount: 1,
+			delay: 0
+		}
+		commit('addPageAnimate', {
+			animateDefaultData,
+			obj
+		})
+		commit('addHistoryCache')
+	},
+	/**
+	 * 
+	 * 修改页面过场动画
+	 * @param  animationName 
+	 * @param  pageUUID 
+	 * @param  index 
+	 */
+	changePageAnimate({
+		commit
+	}, obj) {
+		commit('changePageAnimate', obj)
+		commit('addHistoryCache')
+	},
+	/**
+	 *  删除页面的过场动效
+	 * @param {*} param0 
+	 * @param {*} index 
+	 */
+	deletePageAnimate({
+		commit
+	}, index) {
+		commit('deletePageAnimate', index)
+		commit('addHistoryCache')
+	},
+	/**
 	 * 删除动画
 	 * @param commit
 	 * @param index
@@ -443,6 +489,40 @@ const mutations = {
 	addElementAnimate(state, data) {
 		let activeElement = getters.activeElement(state)
 		activeElement.animations.push(data)
+	},
+	/**
+	 * 添加动画到页面上
+	 * @param  state 
+	 * @param  data 
+	 * @param  UUID 
+	 */
+	addPageAnimate(state, data) {
+		let activePage = getters.activePage(state)
+		activePage.commonStyle.animations.push(data.animateDefaultData)
+	},
+	/**
+	 * 修改页面动画
+	 * @param  state 
+	 * @param  data 
+	 * @param  UUID 
+	 * @param  index 
+	 */
+	changePageAnimate(state, data) {
+		let activePage = getters.activePage(state)
+		activePage.commonStyle.animations.forEach((item, i) => {
+			if (i == data.index) {
+				item.type = data.animationName
+			}
+		})
+	},
+	/**
+	 * 删除页面过场动画
+	 * @param {*} state 
+	 * @param {*} index 
+	 */
+	deletePageAnimate(state, index) {
+		let activePage = getters.activePage(state)
+		activePage.commonStyle.animations.splice(index, 1)
 	},
 	/**
 	 * 删除动画到元素上

@@ -1,13 +1,13 @@
 <template>
   <div class="engine-template-wrapper">
     <!--swiper-->
-    <swiper class="swiper-container swi-con" ref="mySwiper" :options="swiperOptions">
+    <swiper class="swiper-container swi-con" ref="mySwiper" :options="swiperOptions" @transitionEnd="slideChangeTransitionEnd">
       <!-- <div class="swiper-wrapper"> -->
       <swiper-slide class="swiper-slide flat relative hidden" v-for="(page, i) in pageData.pages" :key="i" :style="getCommonStyle(page.commonStyle)">
         <!--页面内容区域-->
         <div class="quark-page-wrapper"
           :style="getCommonStyle({...page.commonStyle, top: pageTop, height: pageData.height, width: pageData.width, position: 'relative'}, scalingRatio)">
-          <componentsTemplate v-for="(item, index) in page.elements" :key="index" @handleElementClick="handleElementClick" :element="item"
+          <componentsTemplate ref="coms" v-for="(item, index) in page.elements" :key="index" @handleElementClick="handleElementClick" :element="item"
             :style="getCommonStyle(item.commonStyle, scalingRatio)">
           </componentsTemplate>
         </div>
@@ -21,9 +21,10 @@
 </template>
 
 <script>
+import runAnimations from '@src/common/js/runAnimations'
 import editorProjectConfig from '@src/pages/editor/DataModel'
 import componentsTemplate from '../../components/components-template'
-import $config from '@src/config'
+// import $config from '@src/config'
 import elementEvents from '@src/mixins/elementEvents'
 export default {
   name: 'engineH5Swiper',
@@ -46,17 +47,18 @@ export default {
         direction: 'horizontal',
         effect: 'slide',
       },
+      sideActive: 0,
     }
   },
   created() {
     // console.log(window._pageData)
     // this.pageData = window._pageData
     // this.scalingRatio = document.body.clientWidth / $config.canvasH5Width
-    this.pageTop =
-      (document.documentElement.clientHeight -
-        this.pageData.height * this.scalingRatio) /
-      2
-    this.pageTop = Math.max(this.pageTop, 0)
+    // this.pageTop =
+    //   (document.documentElement.clientHeight -
+    //     this.pageData.height * this.scalingRatio) /
+    //   2
+    // this.pageTop = Math.max(this.pageTop, 0)
     // this.$nextTick(() => {
     //   console.log('ready')
     //   var mySwiper = new Swiper('.swiper-container', {
@@ -70,7 +72,32 @@ export default {
       return this.$refs.mySwiper.$swiper
     },
   },
+  mounted() {},
   methods: {
+    slideChangeTransitionEnd(val) {
+      if (this.sideActive != val.activeIndex) {
+        // 父级页面动画调用
+        this.sideActive = val.activeIndex
+        let cssText = val.slides[val.activeIndex].style.cssText
+        let animations =
+          this.pageData.pages[val.activeIndex].commonStyle.animations || []
+        runAnimations(val.slides[val.activeIndex], animations, false, () => {
+          val.slides[val.activeIndex].style.cssText = cssText
+        })
+        // 组件动画调用
+        // let cssText_ele = val.slides[val.activeIndex].childNodes[0]
+        val.slides[val.activeIndex].childNodes[0].childNodes.forEach(
+          (item, i) => {
+            let cssText = item.style.cssText
+            let animations =
+              this.pageData.pages[val.activeIndex].elements[i].animations || []
+            runAnimations(item, animations, false, () => {
+              item.style.cssText = cssText
+            })
+          }
+        )
+      }
+    },
     /**
      *  初始化swiper
      */
@@ -86,8 +113,8 @@ export default {
         }
       }
       // 设置页码
-      if (obj.slideNumber) {
-      }
+      // if (obj.slideNumber) {
+      // }
     },
     /**
      * 按钮点击事件

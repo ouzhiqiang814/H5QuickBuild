@@ -97,7 +97,6 @@
 </template>
 
 <script>
-import editorProjectConfig from '../editor/DataModel'
 import previewPage from './components/preview'
 
 export default {
@@ -182,19 +181,17 @@ export default {
      * 创建页面,初始化数据提交接口,然后把id拿到后跳转到编辑器页面
      */
     createNewPage() {
-      let newPageData = editorProjectConfig.getProjectConfig()
       this.loading = true
-
       let pathName = ''
       if (this.searchParams.pageMode == 'h5') {
         pathName = 'editor'
-        newPageData.pageMode = this.searchParams.pageMode
       } else if (this.searchParams.pageMode == 'longPage') {
-        pathName = 'editor'
-        newPageData.pageMode = this.searchParams.pageMode
+        pathName = 'editor/long'
       }
-      this.$store.dispatch('setPrjectData', newPageData)
-      this.$router.push({ path: pathName, query: { id: '' } })
+      this.$router.push({
+        path: pathName,
+        query: { type: this.searchParams.pageMode },
+      })
 
       // this.$router.push({ path: 'editor', query: { id: '' } })
       // this.$axios
@@ -218,7 +215,16 @@ export default {
      * @param id
      */
     editPage(id) {
-      this.$router.push({ path: 'editor', query: { id: id } })
+      let pathName = ''
+      if (this.searchParams.pageMode == 'h5') {
+        pathName = 'editor'
+      } else if (this.searchParams.pageMode == 'longPage') {
+        pathName = 'editor/long'
+      }
+      this.$router.push({
+        path: pathName,
+        query: { id: id, type: this.searchParams.pageMode },
+      })
     },
     /**
      * 复制页面

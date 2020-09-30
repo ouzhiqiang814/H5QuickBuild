@@ -39,6 +39,10 @@ export default new Router({
 			name: 'Editor',
 			component: () => import('@/pages/editor/Index')
 		}, {
+			path: '/editor/long',
+			name: 'EditorLong',
+			component: () => import('@/pages/editor/Long')
+		}, {
 			path: '/mine',
 			name: 'Mine',
 			component: () => import('@/pages/Mine')
@@ -47,6 +51,27 @@ export default new Router({
 			path: '/login',
 			name: 'Login',
 			component: () => import('@/pages/Login'),
+			meta: {
+				hideHeader: true,
+				trust: true,
+				noNeedLogin: true
+			}
+		},
+		{
+			path: '/main',
+			name: 'Main',
+			component: () => import('@/pages/main/index'),
+			meta: {
+				hideHeader: true,
+				trust: true,
+				noNeedLogin: true
+			}
+		},
+		// 页面展示外框
+		{
+			path: '/exhibite',
+			name: 'Exhibite',
+			component: () => import('@/pages/exhibite/index'),
 			meta: {
 				hideHeader: true,
 				trust: true,

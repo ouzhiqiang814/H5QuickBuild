@@ -39,6 +39,7 @@ export default {
     }
   },
   mounted() {
+    // 组件动画播放
     this.animatePlaying = false
     Bus.$on('RUN_ANIMATIONS', (uuid, animations) => {
       if (uuid !== this.uuid) {
